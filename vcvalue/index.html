@@ -1,0 +1,153 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Option-Adjusted Equity Valuation</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cosmo/bootstrap.min.css" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="vc-chart.css">
+    <script src="gaussian.js"></script>
+    <script src="vcvalue-comp.js"></script>
+    <script src="vcvalue-chart.js"></script>
+    <script src="vcvalue-ui.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-5">
+                <form id="financing-form" class="form-horizontal">
+                    <h3>Add Financing</h3>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Investment Amount</label>
+                        <div class="col-md-7 input-group">
+                            <input type="number" class="form-control" id="investment-amount" placeholder="Investment Amount">
+                            <span class="input-group-addon">mm</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Valuation</label>
+                        <div class="col-md-7 input-group">
+                            <input type="number" class="form-control" id="valuation" placeholder="Valuation">
+                            <span class="input-group-addon">mm</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Valuation Type</label>
+                        <div class="col-md-7">
+                            <label class="radio-inline">
+                                <input type="radio" name="pre-or-post" value="pre">Pre-money
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="pre-or-post" checked="checked" value="post">Post-money
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Preference Type</label>
+                        <div class="col-md-7">
+                            <label class="radio-inline">
+                                <input type="radio" name="liquidation-preference-type" checked="checked" value="pari">Pari Passu
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="liquidation-preference-type" value="stacked">Stacked
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-5 col-md-7">
+                            <button type="submit" class="btn btn-primary">Add Financing</button>
+                        </div>
+                    </div>
+                </form>
+                <form id="pricing-parameters" class="form-horizontal">
+                    <h3>Pricing Parameters</h3>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Modal Outcome</label>
+                        <div class="col-md-7 input-group">
+                            <input type="number" class="form-control" id="modal-outcome" placeholder="Most Likely Sale Price">
+                            <span class="input-group-addon">mm</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Volatility</label>
+                        <div class="col-md-7 input-group">
+                            <input type="number" class="form-control" id="outcome-vol" placeholder="Volatility">
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-7">
+                    <svg class="chart" id="liquidation-proceeds-chart" width="100%" height="600px"></svg>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <h3>
+                    Cap Table
+                </h3>
+            </div>
+            <div class="col-md-7">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-4">Liquidation Value</label>
+                        <div class="input-group col-md-8">
+                            <input type="number" class="form-control" id="liquidation-proceeds" placeholder="Liquidation Proceeds">
+                            <span class="input-group-addon">mm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cap-table" class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Share Count</th>
+                        <th>LP/Share</th>
+                        <th>LP Type</th>
+                        <th>Deal Terms</th>
+                        <th>Proceeds</th>
+                        <th>Converted?</th>
+                        <th>Expected Value</th>
+                        <th>EV/Share</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Common</th>
+                        <td><input id="common-share-count" style="width:90%;background:transparent;border:none" value="36,000,000"></td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td></td>
+                        <td id="common-proceeds"></td>
+                        <td>Common</td>
+                        <td id="common-expected-value"></td>
+                        <td id="common-ev-per-share"></td>
+                    </tr>
+                    <tr id="PreferredTemplate" class="hidden">
+                        <th class="preferred-series">Series A</th>
+                        <td class="preferred-share-count">250,000</td>
+                        <td class="preferred-pref-per-share">6.0000</td>
+                        <td class="preferred-pref-type">Pari Passu</td>
+                        <td class="preferred-valuation-summary">$1.5 @ $7.5 Post</td>
+                        <td class="preferred-proceeds"></td>
+                        <td class="preferred-converted"></td>
+                        <td class="preferred-expected-value"></td>
+                        <td class="preferred-ev-per-share"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- /container -->
+</body>
+
+</html>
