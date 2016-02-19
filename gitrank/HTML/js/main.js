@@ -157,7 +157,7 @@ var theApp = (function() {
     var circles = innerSVG.append("g")
       .attr("class", "circle-container")
       .selectAll("circle")
-        .data(nodes)
+        .data(nodes.filter(function(d) { return !isNarrow || d.depth < 3; }))
       .enter().append("circle")
         .attr("class", function(d) {
           return d.sanitizedName + " " +
@@ -262,29 +262,30 @@ var theApp = (function() {
       innerSVG.transition().duration(1000)
         .attr("transform", "translate(" + margin + "," + margin + ")");
 
-      var cbRadius = diameter * (isNarrow ? 0.05 : 0.03);
+      var cbRadius = diameter * (isNarrow ? 0.06 : 0.03);
+      var root_2_over_2 = Math.sqrt(2)/2;
       var closeButtonG = innerSVG.append("g")
         .attr("class", "closebuttongroup")
-        .attr("transform", "translate(" + (diameter - 3 * cbRadius) + "," + (3 * cbRadius) + ")");
+        .attr("transform", "translate(" + (diameter/2*(1+root_2_over_2) + cbRadius*root_2_over_2) + "," + (diameter/2*(1-root_2_over_2) + cbRadius*root_2_over_2) + ")");
 
       closeButtonG.append("line")
         .attr("class", "closebuttonx")
-        .attr("x1", cbRadius * (1 - Math.sqrt(2)/2))
-        .attr("y1", cbRadius * (1 - Math.sqrt(2)/2))
-        .attr("x2", cbRadius * (1 + Math.sqrt(2)/2))
-        .attr("y2", cbRadius * (1 + Math.sqrt(2)/2));
+        .attr("x1", cbRadius * (0 - root_2_over_2))
+        .attr("y1", cbRadius * (0 - root_2_over_2))
+        .attr("x2", cbRadius * (0 + root_2_over_2))
+        .attr("y2", cbRadius * (0 + root_2_over_2));
 
       closeButtonG.append("line")
         .attr("class", "closebuttonx")
-        .attr("x1", cbRadius * (1 - Math.sqrt(2)/2))
-        .attr("y1", cbRadius * (1 + Math.sqrt(2)/2))
-        .attr("x2", cbRadius * (1 + Math.sqrt(2)/2))
-        .attr("y2", cbRadius * (1 - Math.sqrt(2)/2));
+        .attr("x1", cbRadius * (0 - root_2_over_2))
+        .attr("y1", cbRadius * (0 + root_2_over_2))
+        .attr("x2", cbRadius * (0 + root_2_over_2))
+        .attr("y2", cbRadius * (0 - root_2_over_2));
 
       closeButtonG.append("circle")
         .attr("class", "closebuttoncircle")
-        .attr("cx", cbRadius)
-        .attr("cy", cbRadius)
+        .attr("cx", 0)
+        .attr("cy", 0)
         .attr("r", cbRadius)
         .on("click", function() { innerSVG.remove(); })
         .on("touchstart", function(d) {
@@ -427,6 +428,7 @@ $(document).ready(function () {
         theme: "classic",
         placeholder: "Type or click on the map to select a repository...",
         allowClear: true,
+        minimumInputLength: 3,
         data: theApp.getAllChildren(repoTree).sort(function(a,b) {return a.text.localeCompare(b.text);})
       });
       $("#selected-repo-placeholder").addClass("hidden");
