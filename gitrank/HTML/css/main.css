@@ -41,31 +41,31 @@
   fill: #ece7f2;
 }
 
-.node.outlined {
-  stroke: #000;
-  stroke-width: 1.5px;
-}
-
 .node--leaf {
   fill: white;
 }
 
 .node.related {
-  stroke: #00FF00;
+  stroke: #BC6997;
   stroke-width: 1.5px;
 }
 
 .node--leaf.related {
-  fill: #00FF00;
+  fill: #BC6997;
 }
 
 .node.selected {
-  stroke: #FF0000;
+  stroke: #FFBF20;
   stroke-width: 1.5px;
 }
 
 .node--leaf.selected {
-  fill: #FF0000;
+  fill: #FFBF20;
+}
+
+.node.outlined {
+  stroke: #000000;
+  stroke-width: 1.5px;
 }
 
 .tooltipBackground {
@@ -85,6 +85,14 @@
 .closebuttonx {
   stroke: #000000;
   stroke-width: 2;
+}
+
+.related-repo {
+  cursor: pointer;
+}
+
+.related-repo.same-owner {
+  font-weight: bold;
 }
 
 .closebuttoncircle {
