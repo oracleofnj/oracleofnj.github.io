@@ -140,7 +140,7 @@ var theApp = (function() {
           history.pushState(
             {repoID: appState.selectedRepoID},
             "Github Repository Map" + ((appState.selectedRepoID === null) ? "" : " - " + appState.selectedRepoName),
-            (appState.selectedRepoID === null) ? window.location.pathname : ("#!" + appState.selectedRepoName)
+            (appState.selectedRepoID === null) ? "/" : ("#!" + appState.selectedRepoName)
           );
         }
         rerender();
