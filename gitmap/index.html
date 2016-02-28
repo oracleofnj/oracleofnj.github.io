@@ -8,7 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>GitHub Repository Map</title>
         <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -34,6 +34,10 @@
             <select class="hidden" id="selected-repo" style="width:100%;"><option></option></select>
           </h5>
           <div id="tooltip-text" class="mobile-tooltip hidden"></div>
+          <div class="spinner">
+            <div class="dot1"></div>
+            <div class="dot2"></div>
+          </div>
           <svg id="treemap" width="100%"></svg>
           <p id="breadcrumb-container" style="text-align:center">
             <span id="breadcrumbs"></span>

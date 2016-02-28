@@ -40,6 +40,11 @@ var theApp = (function() {
         repoID: ($sr.val() === "") ? null : parseInt($sr.val(), 10),
         pushHistoryEntry: true
       });
+      if (appState.selectedRepoID !== null) {
+        d3.select(".select2-selection__clear")
+          .style("font-weight", "normal")
+          .html("X"); // easier to click than &times;
+      }
     });
     // prevent "x" from opening dropdown - code from https://github.com/select2/select2/issues/3320
     $sr.on('select2:unselecting', function(e) {
@@ -75,6 +80,7 @@ var theApp = (function() {
         "Github Repository Map" + ((appState.selectedRepoID === null) ? "" : " - " + appState.selectedRepoName)
       );
     }
+    d3.selectAll(".spinner").remove();
     rerender();
   }
 
