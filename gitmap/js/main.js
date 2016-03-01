@@ -354,7 +354,7 @@ var theApp = (function() {
       } else {
         if (!repo.githubDetails) {
           if (!appState.rateLimitExceeded && !repo.githubDetailsRequested) {
-            d3.json("https://api.github.com/repos/" + repo.name, function(error, json) {
+            d3.json("http://api.github.com/repos/" + repo.name, function(error, json) {
               var msgObj;
               if (error) {
                 repo.githubDetailsRequested = false;
