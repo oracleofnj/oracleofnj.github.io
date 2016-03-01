@@ -98,6 +98,9 @@ var theApp = (function() {
     addEdges(edges);
     createTreeMap(repoTree,1);
     initSelectBox(repoTree);
+    if ($('html').is('.eq-ie9')) {
+      appState.githubAPIBroken = true;
+    }
     window.addEventListener('popstate', function(e) {
       if (e.state) {
         dispatch({type: "SELECT_REPO", byName: false, repoID: e.state.repoID, pushHistoryEntry: false});
@@ -354,7 +357,7 @@ var theApp = (function() {
       } else {
         if (!repo.githubDetails) {
           if (!appState.rateLimitExceeded && !repo.githubDetailsRequested) {
-            d3.json("http://api.github.com/repos/" + repo.name, function(error, json) {
+            d3.json("https://api.github.com/repos/" + repo.name, function(error, json) {
               var msgObj;
               if (error) {
                 repo.githubDetailsRequested = false;
