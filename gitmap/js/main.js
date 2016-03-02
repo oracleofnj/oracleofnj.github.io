@@ -99,6 +99,9 @@ var theApp = (function() {
     addEdges(edges);
     createTreeMap(repoTree,1);
     initSelectBox(repoTree);
+    if ($('html').is('.eq-ie9')) {
+      appState.githubAPIBroken = true;
+    }
     window.addEventListener('popstate', function(e) {
       if (e.state) {
         dispatch({type: "SELECT_REPO", byName: false, repoID: e.state.repoID, pushHistoryEntry: false});
